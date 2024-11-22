@@ -1,16 +1,29 @@
-all: main
+# Nama file output yang dihasilkan
+TARGET = main
+# Compiler yang digunakan
+CC = gcc
 
-CC = clang
-override CFLAGS += -g -Wno-everything -pthread -lm
+# Opsi kompilasi
+CFLAGS = -Wall -g
 
-SRCS = $(shell find . -name '.ccls-cache' -type d -prune -o -type f -name '*.c' -print)
-HEADERS = $(shell find . -name '.ccls-cache' -type d -prune -o -type f -name '*.h' -print)
+# Daftar file sumber (.c)
+SRCS = main.c barang.c kategori.c login.c member.c pembayaran.c penjualan.c
 
-main: $(SRCS) $(HEADERS)
-	$(CC) $(CFLAGS) $(SRCS) -o "$@"
+# Daftar file objek yang dihasilkan (.o)
+OBJS = $(SRCS:.c=.o)
 
-main-debug: $(SRCS) $(HEADERS)
-	$(CC) $(CFLAGS) -O0 $(SRCS) -o "$@"
+# Rule untuk mengkompilasi file objek dari file sumber
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
+# Rule untuk menghasilkan file eksekusi
+$(TARGET): $(OBJS)
+	$(CC) $(OBJS) -o $(TARGET)
+
+# Rule untuk membersihkan file objek dan file eksekusi
 clean:
-	rm -f main main-debug
+	rm -f $(OBJS) $(TARGET)
+
+# Rule untuk menjalankan program
+run: $(TARGET)
+	./$(TARGET)
